@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Cloud Player Masterpiece</title>
+    <title>My Cloud Player</title>
     <link rel="icon" type="image/png" href="images/mysongs.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212">
@@ -20,6 +20,9 @@
             
             <button class="nav-item active" id="nav-home" onclick="showHome()">
                 🏠 Domů
+            </button>
+            <button class="nav-item" id="nav-favorites" onclick="showFavorites()">
+                ❤️ Oblíbené
             </button>
 
             <div class="search-box">
@@ -62,16 +65,22 @@
             </div>
         </div>
 
-        <div class="player-right"></div>
+        <div class="player-right">
+            <!-- Tlačítko lajku v přehrávači -->
+            <button class="control-btn" id="fav-toggle-btn" onclick="toggleCurrentFavorite()" style="font-size: 20px;" title="Oblíbené">🤍</button>
+        </div>
     </div>
 
     <!-- Fullscreen Player pro mobily -->
     <div class="mobile-fullscreen-player" id="fs-player">
         <button class="close-fs-btn" onclick="closeFullscreenPlayer()">✕</button>
         <div class="fs-cover" id="fs-cover">🎵</div>
-        <div class="fs-meta">
-            <div class="fs-title" id="fs-title">Nic se nepřehrává</div>
-            <div class="fs-artist" id="fs-artist">-</div>
+        <div class="fs-meta-row">
+            <div class="fs-meta">
+                <div class="fs-title" id="fs-title">Nic se nepřehrává</div>
+                <div class="fs-artist" id="fs-artist">-</div>
+            </div>
+            <button class="control-btn" id="fs-fav-toggle-btn" onclick="toggleCurrentFavorite()" style="font-size: 26px;">🤍</button>
         </div>
         <div class="progress-container">
             <span id="fs-current-time">0:00</span>
