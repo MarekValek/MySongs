@@ -38,7 +38,7 @@ body {
     padding: 20px 15px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     border-right: 1px solid #1a1a1a;
 }
 
@@ -273,6 +273,25 @@ body {
     font-weight: 700;
 }
 
+.song-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.fav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-sub);
+    transition: transform 0.1s;
+}
+
+.fav-btn:hover {
+    transform: scale(1.2);
+}
+
 .equalizer {
     display: flex;
     align-items: flex-end;
@@ -385,7 +404,6 @@ body {
     transform: scale(1.1);
 }
 
-/* Aktivní stav tlačítek shuffle / repeat */
 .control-btn.active {
     color: var(--accent-color);
 }
@@ -447,6 +465,8 @@ body {
 
 .player-right {
     width: 30%;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .mobile-fullscreen-player {
@@ -492,7 +512,10 @@ body {
     font-size: 60px;
 }
 
-.fs-meta {
+.fs-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-top: 15px;
 }
 
@@ -551,6 +574,7 @@ body {
         height: 80px;
         padding: 0 15px;
     }
-    .player-center, .player-right { display: none; }
-    .now-playing-box { width: 100%; }
+    .player-center { display: none; }
+    .player-right { width: auto; }
+    .now-playing-box { width: calc(100% - 40px); }
 }
