@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Můj Spotify Player</title>
+    <link rel="icon" type="image/png" href=".png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #000000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+        h2 { color: #1db954; }
+        ul { list-style: none; padding: 0; }
+        li {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #282828;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        li:hover { background-color: #383838; }
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #181818;
+            border-top: 1px solid #282828;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        audio { width: 50%; }
+        .artist-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            text-align: left;
+            width: 100%;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .artist-btn:hover { color: #1db954; }
+    </style>
+</head>
+<body>
+
+    <!-- Boční menu s autory -->
+    <div class="sidebar">
+        <h2>Interpreti</h2>
+        <ul id="artist-list"></ul>
+    </div>
+
+    <!-- Hlavní obsah - seznam skladeb vybraného interpreta -->
+    <div class="main-content">
+        <h2 id="current-artist-title">Vyberte interpreta</h2>
+        <ul id="song-list"></ul>
+    </div>
+
+    <!-- Spodní přehrávač -->
+    <div class="player-bar">
+        <span id="now-playing">Nic se nepřehrává</span>
+        <audio id="audio-player" controls></audio>
+    </div>
+
+    <script>
+        let musicData = {};
+        const audioPlayer = document.getElementById('audio-player');
+        const nowPlaying = document.getElementById('now-playing');
+        const artistListEl = document.getElementById('artist-list');
+        const songListEl = document.getElementById('song-list');
+        const currentArtistTitle = document.getElementById('current-artist-title');
+
+        // Načtení songs.json při spuštění webu
+        fetch('songs.json')
+            .then(response => response.json())
+            .then(data => {
+                musicData = data;
+                renderArtists();
+            })
+            .catch(error => console.error('Chyba při načítání songs.json:', error));
+
+        // Vykreslení seznamu interpretů v menu
+        function renderArtists() {
+            artistListEl.innerHTML = '';
+            for (const artist in musicData) {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = 'artist-btn';
+                btn.textContent = artist;
+                btn.onclick = () => showSongs(artist);
+                li.appendChild(btn);
+                artistListEl.appendChild(li);
+            }
+        }
+
+        // Zobrazení písniček daného interpreta
+        function renderSongs(artist) {
+            currentArtistTitle.textContent = artist;
+            songListEl.innerHTML = '';
+            
+            musicData[artist].forEach(song => {
+                const li = document.createElement('li');
+                // Odstranění přípony .mp3 pro hezčí název
+                li.textContent = song.replace('.mp3', '');
+                li.onclick = () => playSong(artist, song);
+                songListEl.appendChild(li);
+            });
+        }
+
+        // Spuštění konkrétní písničky
+        function playSong(artist, song) {
+            const songPath = `songs/${artist}/${song}`;
+            audioPlayer.src = songPath;
+            audioPlayer.play();
+            nowPlaying.textContent = `Hraje: ${song.replace('.mp3', '')}`;
+        }
+    </script>
+</body>
+</html>
