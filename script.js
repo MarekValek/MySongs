@@ -32,7 +32,7 @@ function renderSidebarArtists() {
         btn.className = 'artist-btn';
         const thumbPath = `songs/${artist}/cover.png`;
         btn.innerHTML = `
-            <img src="${thumbPath}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';">
+            <img src="${thumbPath}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';">
             <span>${artist}</span>
         `;
         btn.onclick = () => selectArtist(artist);
@@ -70,7 +70,7 @@ function selectArtist(artist) {
                 <img src="songs/${artist}/cover.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🎵';">
             </div>
             <div>
-                <span style="font-size:12px;font-weight:700;text-transform:uppercase;">Interpret</span>
+                <span style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text-sub);">Interpret</span>
                 <h1 class="header-title">${artist}</h1>
             </div>
         </div>
@@ -79,10 +79,12 @@ function selectArtist(artist) {
 
     songs.forEach((song, index) => {
         const cleanName = song.replace(/\.[^/.]+$/, "");
+        const isPlaying = (currentArtist === artist && currentSongIndex === index && !audioPlayer.paused);
+        
         html += `
-            <div class="song-item" onclick="playSongFromQueue('${artist}', ${index})">
+            <div class="song-item ${isPlaying ? 'playing' : ''}" id="song-row-${index}" onclick="playSongFromQueue('${artist}', ${index})">
                 <div class="song-info-left">
-                    <span class="song-index">${index + 1}</span>
+                    <span class="song-index">${isPlaying ? '<div class="equalizer"><span></span><span></span><span></span></div>' : (index + 1)}</span>
                     <div class="song-name">${cleanName}</div>
                 </div>
             </div>
@@ -97,7 +99,7 @@ function handleSearch() {
     const query = document.getElementById('search-input').value.toLowerCase().trim();
     if (!query) { showHome(); return; }
 
-    let html = `<h2 style="margin-bottom:15px;">Výsledky pro: "${query}"</h2><div class="song-list">`;
+    let html = `<h2 style="margin-bottom:15px;font-size:22px;font-weight:800;">Výsledky hledání</h2><div class="song-list">`;
     let found = false;
 
     Object.keys(musicData).forEach(artist => {
@@ -120,7 +122,7 @@ function handleSearch() {
         });
     });
 
-    if (!found) html += '<div style="color:var(--text-sub);">Nic nenalezeno</div>';
+    if (!found) html += '<div style="color:var(--text-sub);padding:10px;">Žádné výsledky nenalezeny</div>';
     html += '</div>';
     mainContent.innerHTML = html;
 }
@@ -154,9 +156,18 @@ function playSong() {
     const imgHTML = `<img src="${coverPath}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🎵';">`;
     document.getElementById('np-cover-container').innerHTML = imgHTML;
     document.getElementById('fs-cover').innerHTML = imgHTML;
+
+    // Aktualizace seznamu skladeb (ekvalizér)
+    if (mainContent.innerHTML.includes('header-title') && mainContent.innerHTML.includes(currentArtist)) {
+        selectArtist(currentArtist);
+    }
 }
 
 function togglePlay() {
+    if (currentSongIndex === -1 && musicData[currentArtist]?.length > 0) {
+        playSongFromQueue(currentArtist, 0);
+        return;
+    }
     if (audioPlayer.paused) {
         audioPlayer.play();
         playPauseBtn.textContent = "⏸";
