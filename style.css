@@ -141,7 +141,6 @@ body {
     background-color: var(--card-hover);
 }
 
-/* Hlavní obsah s plynulým fade-in efektem */
 .main-content {
     flex: 1;
     padding: 30px;
@@ -274,7 +273,6 @@ body {
     font-weight: 700;
 }
 
-/* Animovaný ekvalizér (skákající čárky) */
 .equalizer {
     display: flex;
     align-items: flex-end;
@@ -299,7 +297,6 @@ body {
     100% { transform: scaleY(1); }
 }
 
-/* Spodní lišta přehrávače */
 .player-bar {
     height: 90px;
     background-color: var(--sidebar-bg);
@@ -388,6 +385,11 @@ body {
     transform: scale(1.1);
 }
 
+/* Aktivní stav tlačítek shuffle / repeat */
+.control-btn.active {
+    color: var(--accent-color);
+}
+
 .play-pause-btn {
     width: 40px;
     height: 40px;
@@ -447,7 +449,6 @@ body {
     width: 30%;
 }
 
-/* Fullscreen Player pro mobily */
 .mobile-fullscreen-player {
     position: fixed;
     top: 0;
@@ -511,7 +512,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
+    gap: 30px;
     margin: 20px 0;
 }
 
