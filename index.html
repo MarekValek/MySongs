@@ -2,141 +2,405 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Můj Spotify Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Cloud Player</title>
     <link rel="icon" type="image/png" href="images/mysongs.png">
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <style>
+        :root {
+            --bg-color: #121212;
+            --sidebar-bg: #000000;
+            --card-bg: #181818;
+            --card-hover: #282828;
+            --accent-color: #1db954;
+            --text-main: #ffffff;
+            --text-sub: #b3b3b3;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
             display: flex;
+            flex-direction: column;
             height: 100vh;
+            overflow: hidden;
+            user-select: none;
         }
+
+        /* Hlavní rozvržení */
+        .app-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 90px);
+            overflow: hidden;
+        }
+
+        /* Boční panel (Interpreti) */
         .sidebar {
-            width: 250px;
-            background-color: #000000;
-            padding: 20px;
-            overflow-y: auto;
+            width: 240px;
+            background-color: var(--sidebar-bg);
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-right: 1px solid #222;
         }
+
+        .sidebar h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin: 0 0 10px 10px;
+        }
+
+        .artist-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 15px;
+            font-weight: 600;
+            text-align: left;
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .artist-btn:hover, .artist-btn.active {
+            color: var(--text-main);
+            background-color: var(--card-hover);
+        }
+
+        .artist-btn.active {
+            border-left: 4px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* Hlavní výpis skladeb */
         .main-content {
             flex: 1;
-            padding: 20px;
+            padding: 25px;
             overflow-y: auto;
-            padding-bottom: 100px;
+            background: linear-gradient(180deg, #1e1e1e 0%, var(--bg-color) 300px);
         }
-        h2 { color: #1db954; }
-        ul { list-style: none; padding: 0; }
-        li {
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #282828;
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 20px 0;
+            color: var(--text-main);
+        }
+
+        .song-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--card-bg);
+            padding: 14px 18px;
+            border-radius: 8px;
             cursor: pointer;
-            border-radius: 4px;
-            transition: background 0.2s;
+            transition: background 0.2s ease, transform 0.1s ease;
         }
-        li:hover { background-color: #383838; }
-        .player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #181818;
-            border-top: 1px solid #282828;
-            padding: 15px;
+
+        .song-item:hover {
+            background-color: var(--card-hover);
+        }
+
+        .song-item:active {
+            transform: scale(0.99);
+        }
+
+        .song-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .song-icon {
+            width: 36px;
+            height: 36px;
+            background-color: #282828;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            color: var(--accent-color);
+            font-size: 14px;
         }
-        audio { width: 50%; }
-        .artist-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
-            text-align: left;
+
+        .song-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .song-item.playing .song-name {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        /* Spodní lišta přehrávače */
+        .player-bar {
+            height: 90px;
+            background-color: #181818;
+            border-top: 1px solid #282828;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 100;
+        }
+
+        .track-details {
+            display: flex;
+            flex-direction: column;
+            width: 25%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .track-artist {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 3px;
+        }
+
+        .custom-audio-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50%;
+            gap: 8px;
+        }
+
+        audio {
             width: 100%;
-            cursor: pointer;
-            padding: 10px;
+            height: 32px;
+            outline: none;
         }
-        .artist-btn:hover { color: #1db954; }
+
+        /* Responsive design pro mobily */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+                height: calc(100vh - 110px);
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+            }
+
+            .sidebar h2 { display: none; }
+
+            .artist-btn {
+                white-space: nowrap;
+                padding: 8px 16px;
+                border-radius: 20px;
+                background-color: #222;
+            }
+
+            .artist-btn.active {
+                border-left: none;
+                background-color: var(--accent-color);
+                color: #000;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .header-title {
+                font-size: 22px;
+                margin-bottom: 15px;
+            }
+
+            .player-bar {
+                height: 110px;
+                flex-direction: column;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px 15px;
+            }
+
+            .track-details {
+                width: 100%;
+                text-align: center;
+            }
+
+            .custom-audio-controls {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Boční menu s autory -->
-    <div class="sidebar">
-        <h2>Interpreti</h2>
-        <ul id="artist-list"></ul>
-    </div>
+    <div class="app-container">
+        <!-- Boční menu -->
+        <div class="sidebar">
+            <h2>Interpreti</h2>
+            <div id="artist-list"></div>
+        </div>
 
-    <!-- Hlavní obsah - seznam skladeb vybraného interpreta -->
-    <div class="main-content">
-        <h2 id="current-artist-title">Vyberte interpreta</h2>
-        <ul id="song-list"></ul>
+        <!-- Seznam skladeb -->
+        <div class="main-content">
+            <h1 class="header-title" id="current-artist-title">Vyberte interpreta</h1>
+            <div class="song-list" id="song-list"></div>
+        </div>
     </div>
 
     <!-- Spodní přehrávač -->
     <div class="player-bar">
-        <span id="now-playing">Nic se nepřehrává</span>
-        <audio id="audio-player" controls></audio>
+        <div class="track-details">
+            <div class="track-name" id="now-playing-title">Nic se nepřehrává</div>
+            <div class="track-artist" id="now-playing-artist">-</div>
+        </div>
+        <div class="custom-audio-controls">
+            <audio id="audio-player" controls controlsList="nodownload"></audio>
+        </div>
     </div>
 
     <script>
         let musicData = {};
+        let currentArtist = "";
+        let currentSongIndex = -1;
+
         const audioPlayer = document.getElementById('audio-player');
-        const nowPlaying = document.getElementById('now-playing');
+        const nowPlayingTitle = document.getElementById('now-playing-title');
+        const nowPlayingArtist = document.getElementById('now-playing-artist');
         const artistListEl = document.getElementById('artist-list');
         const songListEl = document.getElementById('song-list');
         const currentArtistTitle = document.getElementById('current-artist-title');
 
-        // Načtení songs.json při spuštění webu
+        // Načtení dat ze jsonu
         fetch('songs.json')
             .then(response => response.json())
             .then(data => {
                 musicData = data;
                 renderArtists();
             })
-            .catch(error => console.error('Chyba při načítání songs.json:', error));
+            .catch(err => console.error('Chyba načítání songs.json:', err));
 
-        // Vykreslení seznamu interpretů v menu
+        // Vykreslení tlačítka interpretů
         function renderArtists() {
             artistListEl.innerHTML = '';
-            for (const artist in musicData) {
-                const li = document.createElement('li');
+            const artists = Object.keys(musicData);
+            
+            artists.forEach((artist, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'artist-btn';
-                btn.textContent = artist;
-                btn.onclick = () => renderSongs(artist);
-                li.appendChild(btn);
-                artistListEl.appendChild(li);
-            }
+                btn.innerHTML = `🎵 ${artist}`;
+                btn.onclick = () => selectArtist(artist, btn);
+                artistListEl.appendChild(btn);
+
+                // Automaticky vybere prvního interpreta při načtení
+                if (index === 0) selectArtist(artist, btn);
+            });
         }
 
-        // Zobrazení písniček daného interpreta
-        function renderSongs(artist) {
+        // Výběr interpreta
+        function selectArtist(artist, btnElement) {
+            currentArtist = artist;
             currentArtistTitle.textContent = artist;
-            songListEl.innerHTML = '';
             
-            musicData[artist].forEach(song => {
-                const li = document.createElement('li');
-                // Odstranění přípony .mp3 pro hezčí název
-                li.textContent = song.replace('.mp3', '');
-                li.onclick = () => playSong(artist, song);
-                songListEl.appendChild(li);
+            // Změna aktivního stavu v menu
+            document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+
+            renderSongs();
+        }
+
+        // Vykreslení písniček
+        function renderSongs() {
+            songListEl.innerHTML = '';
+            const songs = musicData[currentArtist] || [];
+
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.className = 'song-item';
+                
+                const cleanName = song.replace(/\.[^/.]+$/, "");
+                
+                item.innerHTML = `
+                    <div class="song-info">
+                        <div class="song-icon">▶</div>
+                        <div class="song-name">${cleanName}</div>
+                    </div>
+                `;
+
+                item.onclick = () => playSong(index);
+                songListEl.appendChild(item);
             });
         }
 
         // Spuštění konkrétní písničky
-        function playSong(artist, song) {
-            const songPath = `songs/${artist}/${song}`;
+        function playSong(index) {
+            const songs = musicData[currentArtist];
+            if (!songs || !songs[index]) return;
+
+            currentSongIndex = index;
+            const songFile = songs[index];
+            const songPath = `songs/${currentArtist}/${songFile}`;
+
             audioPlayer.src = songPath;
-            audioPlayer.play();
-            nowPlaying.textContent = `Hraje: ${song.replace('.mp3', '')}`;
+            audioPlayer.play().catch(e => console.log("Přehrávání zablokováno:", e));
+
+            const cleanName = songFile.replace(/\.[^/.]+$/, "");
+            nowPlayingTitle.textContent = cleanName;
+            nowPlayingArtist.textContent = currentArtist;
+
+            // Zvýraznění přehrávané písničky
+            const items = songListEl.querySelectorAll('.song-item');
+            items.forEach((it, i) => {
+                if (i === index) {
+                    it.classList.add('playing');
+                } else {
+                    it.classList.remove('playing');
+                }
+            });
         }
+
+        // Automatické přehrání DALŠÍ písničky po skončení aktuální
+        audioPlayer.onended = () => {
+            const songs = musicData[currentArtist];
+            if (songs && currentSongIndex + 1 < songs.length) {
+                playSong(currentSongIndex + 1);
+            }
+        };
     </script>
 </body>
 </html>
