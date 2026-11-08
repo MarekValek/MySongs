@@ -1,0 +1,20 @@
+{
+  "name": "MySongs",
+  "short_name": "MySongs",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#E31B23",
+  "icons": [
+    {
+      "src": "images/penzionpavluvky1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/penzionpavluvky1.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
