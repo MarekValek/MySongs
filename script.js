@@ -4,6 +4,7 @@ let currentSongIndex = -1;
 let activeQueue = [];
 let isShuffle = false;
 let isRepeat = false;
+let favorites = JSON.parse(localStorage.getItem('user_favorites') || '[]');
 
 const audioPlayer = document.getElementById('audio-player');
 const mainContent = document.getElementById('main-content');
@@ -24,7 +25,6 @@ fetch('songs.json')
         musicData = data;
         renderSidebarArtists();
         
-        // Obnovení poslední skladby z paměti (pokud existuje)
         const savedArtist = localStorage.getItem('last_artist');
         const savedSongIndex = localStorage.getItem('last_song_index');
         
@@ -36,17 +36,7 @@ fetch('songs.json')
             const songFile = activeQueue[currentSongIndex];
             if (songFile) {
                 audioPlayer.src = `songs/${currentArtist}/${songFile}`;
-                const cleanName = songFile.replace(/\.[^/.]+$/, "");
-                const coverPath = `songs/${currentArtist}/cover.png`;
-
-                document.getElementById('now-playing-title').textContent = cleanName;
-                document.getElementById('now-playing-artist').textContent = currentArtist;
-                document.getElementById('fs-title').textContent = cleanName;
-                document.getElementById('fs-artist').textContent = currentArtist;
-
-                const imgHTML = `<img src="${coverPath}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🎵';">`;
-                document.getElementById('np-cover-container').innerHTML = imgHTML;
-                document.getElementById('fs-cover').innerHTML = imgHTML;
+                updatePlayerMeta(songFile, currentArtist);
             }
         }
         
@@ -70,9 +60,7 @@ function renderSidebarArtists() {
 }
 
 function showHome() {
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    document.getElementById('nav-home').classList.add('active');
-
+    setActiveNav('nav-home');
     let gridHTML = '<h1 style="font-size:32px;font-weight:800;margin-bottom:20px;">Dobrý den</h1><div class="home-grid">';
     
     Object.keys(musicData).forEach(artist => {
@@ -87,6 +75,44 @@ function showHome() {
 
     gridHTML += '</div>';
     mainContent.innerHTML = gridHTML;
+}
+
+function showFavorites() {
+    setActiveNav('nav-favorites');
+    let html = '<h1 style="font-size:32px;font-weight:800;margin-bottom:20px;">Oblíbené skladby</h1><div class="song-list">';
+
+    if (favorites.length === 0) {
+        html += '<div style="color:var(--text-sub);padding:10px;">Zatím nemáš žádné oblíbené skladby. Klikni na srdíčko u písničky!</div>';
+    } else {
+        favorites.forEach((fav, index) => {
+            const cleanName = fav.song.replace(/\.[^/.]+$/, "");
+            const isPlaying = (currentArtist === fav.artist && activeQueue[currentSongIndex] === fav.song && !audioPlayer.paused);
+
+            html += `
+                <div class="song-item ${isPlaying ? 'playing' : ''}" onclick="playFavSong('${fav.artist}', '${fav.song}')">
+                    <div class="song-info-left">
+                        <span class="song-index">${isPlaying ? '<div class="equalizer"><span></span><span></span><span></span></div>' : (index + 1)}</span>
+                        <div>
+                            <div class="song-name">${cleanName}</div>
+                            <div style="font-size:12px;color:var(--text-sub);">${fav.artist}</div>
+                        </div>
+                    </div>
+                    <div class="song-actions" onclick="event.stopPropagation()">
+                        <button class="fav-btn" onclick="toggleFavorite('${fav.artist}', '${fav.song}')">❤️</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += '</div>';
+    mainContent.innerHTML = html;
+}
+
+function setActiveNav(navId) {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById(navId);
+    if (target) target.classList.add('active');
 }
 
 function selectArtist(artist) {
@@ -109,6 +135,7 @@ function selectArtist(artist) {
     songs.forEach((song, index) => {
         const cleanName = song.replace(/\.[^/.]+$/, "");
         const isPlaying = (currentArtist === artist && currentSongIndex === index && !audioPlayer.paused);
+        const isFav = favorites.some(f => f.artist === artist && f.song === song);
         
         html += `
             <div class="song-item ${isPlaying ? 'playing' : ''}" onclick="playSongFromQueue('${artist}', ${index})">
@@ -116,12 +143,49 @@ function selectArtist(artist) {
                     <span class="song-index">${isPlaying ? '<div class="equalizer"><span></span><span></span><span></span></div>' : (index + 1)}</span>
                     <div class="song-name">${cleanName}</div>
                 </div>
+                <div class="song-actions" onclick="event.stopPropagation()">
+                    <button class="fav-btn" onclick="toggleFavorite('${artist}', '${song}')">${isFav ? '❤️' : '🤍'}</button>
+                </div>
             </div>
         `;
     });
 
     html += '</div>';
     mainContent.innerHTML = html;
+}
+
+function toggleFavorite(artist, song) {
+    const index = favorites.findIndex(f => f.artist === artist && f.song === song);
+    if (index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.push({ artist, song });
+    }
+    localStorage.setItem('user_favorites', JSON.stringify(favorites));
+
+    // Obnovení zobrazení podle toho, kde se uživatel nachází
+    if (document.getElementById('nav-favorites').classList.contains('active')) {
+        showFavorites();
+    } else if (currentArtist === artist) {
+        selectArtist(artist);
+    }
+    updateCurrentFavButton();
+}
+
+function toggleCurrentFavorite() {
+    if (currentSongIndex === -1 || !activeQueue[currentSongIndex]) return;
+    const songFile = activeQueue[currentSongIndex];
+    toggleFavorite(currentArtist, songFile);
+}
+
+function updateCurrentFavButton() {
+    if (currentSongIndex === -1 || !activeQueue[currentSongIndex]) return;
+    const songFile = activeQueue[currentSongIndex];
+    const isFav = favorites.some(f => f.artist === currentArtist && f.song === songFile);
+    const icon = isFav ? '❤️' : '🤍';
+    
+    document.getElementById('fav-toggle-btn').textContent = icon;
+    document.getElementById('fs-fav-toggle-btn').textContent = icon;
 }
 
 function handleSearch() {
@@ -136,6 +200,7 @@ function handleSearch() {
             const cleanName = song.replace(/\.[^/.]+$/, "");
             if (cleanName.toLowerCase().includes(query) || artist.toLowerCase().includes(query)) {
                 found = true;
+                const isFav = favorites.some(f => f.artist === artist && f.song === song);
                 html += `
                     <div class="song-item" onclick="playSongFromQueue('${artist}', ${index})">
                         <div class="song-info-left">
@@ -144,6 +209,9 @@ function handleSearch() {
                                 <div class="song-name">${cleanName}</div>
                                 <div style="font-size:12px;color:var(--text-sub);">${artist}</div>
                             </div>
+                        </div>
+                        <div class="song-actions" onclick="event.stopPropagation()">
+                            <button class="fav-btn" onclick="toggleFavorite('${artist}', '${song}')">${isFav ? '❤️' : '🤍'}</button>
                         </div>
                     </div>
                 `;
@@ -163,36 +231,49 @@ function playSongFromQueue(artist, index) {
     playSong();
 }
 
+function playFavSong(artist, song) {
+    currentArtist = artist;
+    activeQueue = musicData[artist];
+    currentSongIndex = activeQueue.indexOf(song);
+    playSong();
+}
+
 function playSong() {
     if (!activeQueue || !activeQueue[currentSongIndex]) return;
 
     const songFile = activeQueue[currentSongIndex];
-    const songPath = `songs/${currentArtist}/${songFile}`;
-    const cleanName = songFile.replace(/\.[^/.]+$/, "");
-    const coverPath = `songs/${currentArtist}/cover.png`;
-
-    audioPlayer.src = songPath;
+    audioPlayer.src = `songs/${currentArtist}/${songFile}`;
     audioPlayer.play().catch(e => console.log("Autoplay blocked:", e));
 
     playPauseBtn.textContent = "⏸";
     fsPlayBtn.textContent = "⏸";
 
+    updatePlayerMeta(songFile, currentArtist);
+
+    localStorage.setItem('last_artist', currentArtist);
+    localStorage.setItem('last_song_index', currentSongIndex);
+
+    updateCurrentFavButton();
+
+    if (document.getElementById('nav-favorites').classList.contains('active')) {
+        showFavorites();
+    } else if (mainContent.innerHTML.includes('header-title') && mainContent.innerHTML.includes(currentArtist)) {
+        selectArtist(currentArtist);
+    }
+}
+
+function updatePlayerMeta(songFile, artist) {
+    const cleanName = songFile.replace(/\.[^/.]+$/, "");
+    const coverPath = `songs/${artist}/cover.png`;
+
     document.getElementById('now-playing-title').textContent = cleanName;
-    document.getElementById('now-playing-artist').textContent = currentArtist;
+    document.getElementById('now-playing-artist').textContent = artist;
     document.getElementById('fs-title').textContent = cleanName;
-    document.getElementById('fs-artist').textContent = currentArtist;
+    document.getElementById('fs-artist').textContent = artist;
 
     const imgHTML = `<img src="${coverPath}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🎵';">`;
     document.getElementById('np-cover-container').innerHTML = imgHTML;
     document.getElementById('fs-cover').innerHTML = imgHTML;
-
-    // Uložení do paměti prohlížeče
-    localStorage.setItem('last_artist', currentArtist);
-    localStorage.setItem('last_song_index', currentSongIndex);
-
-    if (mainContent.innerHTML.includes('header-title') && mainContent.innerHTML.includes(currentArtist)) {
-        selectArtist(currentArtist);
-    }
 }
 
 function togglePlay() {
@@ -213,7 +294,6 @@ function togglePlay() {
 
 function nextSong() {
     if (!activeQueue.length) return;
-    
     if (isShuffle) {
         currentSongIndex = Math.floor(Math.random() * activeQueue.length);
     } else {
@@ -232,26 +312,16 @@ function toggleShuffle() {
     isShuffle = !isShuffle;
     const btn1 = document.getElementById('shuffle-btn');
     const btn2 = document.getElementById('fs-shuffle-btn');
-    if (isShuffle) {
-        btn1.classList.add('active');
-        btn2.classList.add('active');
-    } else {
-        btn1.classList.remove('active');
-        btn2.classList.remove('active');
-    }
+    btn1.classList.toggle('active', isShuffle);
+    btn2.classList.toggle('active', isShuffle);
 }
 
 function toggleRepeat() {
     isRepeat = !isRepeat;
     const btn1 = document.getElementById('repeat-btn');
     const btn2 = document.getElementById('fs-repeat-btn');
-    if (isRepeat) {
-        btn1.classList.add('active');
-        btn2.classList.add('active');
-    } else {
-        btn1.classList.remove('active');
-        btn2.classList.remove('active');
-    }
+    btn1.classList.toggle('active', isRepeat);
+    btn2.classList.toggle('active', isRepeat);
 }
 
 audioPlayer.ontimeupdate = () => {
@@ -278,9 +348,8 @@ audioPlayer.onended = () => {
     }
 };
 
-// Klávesové zkratky pro PC (Mezerník = play/pause, Šipky = další/předchozí)
 document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT') return; // Ignorovat, když píšeš do vyhledávání
+    if (e.target.tagName === 'INPUT') return;
     if (e.code === 'Space') {
         e.preventDefault();
         togglePlay();
