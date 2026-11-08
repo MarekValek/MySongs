@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Cloud Player</title>
+    <title>My Cloud Player Pro Max</title>
     <link rel="icon" type="image/png" href="images/mysongs.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212">
@@ -41,38 +41,96 @@
         .app-container {
             display: flex;
             flex: 1;
-            height: calc(100vh - 110px);
+            height: calc(100vh - 90px);
             overflow: hidden;
         }
 
-        /* Boční panel / horní lišta na mobilu */
+        /* Boční panel */
         .sidebar {
             width: 260px;
             background-color: var(--sidebar-bg);
             padding: 20px 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
             border-right: 1px solid #222;
         }
 
-        .sidebar h2 {
+        .brand-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding-left: 10px;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 15px;
+            font-weight: 700;
+            text-align: left;
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--text-main);
+            background-color: var(--card-hover);
+        }
+
+        .search-box {
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 35px;
+            border-radius: 20px;
+            border: none;
+            background-color: #242424;
+            color: #fff;
             font-size: 13px;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .sidebar h2 {
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--text-sub);
-            margin: 0 0 10px 10px;
+            margin: 10px 0 5px 10px;
         }
 
         .artist-btn {
             background: transparent;
             border: none;
             color: var(--text-sub);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             text-align: left;
             width: 100%;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -90,12 +148,57 @@
             color: var(--accent-color);
         }
 
-        /* Hlavní obsah */
+        /* Hlavní výpis skladeb */
         .main-content {
             flex: 1;
             padding: 30px;
             overflow-y: auto;
-            background: linear-gradient(180deg, #202020 0%, var(--bg-color) 350px);
+            background: linear-gradient(180deg, #222 0%, var(--bg-color) 300px);
+        }
+
+        /* Home Grid */
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .artist-card {
+            background-color: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .artist-card:hover {
+            background-color: var(--card-hover);
+            transform: translateY(-5px);
+        }
+
+        .artist-card-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            background-color: #282828;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .artist-card-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 6px;
         }
 
         .header-section {
@@ -176,43 +279,36 @@
             color: var(--accent-color);
         }
 
-        /* Spodní přehrávač výchozí (PC) */
+        /* Spodní přehrávač PC */
         .player-bar {
-            height: 110px;
+            height: 90px;
             background-color: var(--sidebar-bg);
             border-top: 1px solid #282828;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 10px 20px;
-            z-index: 100;
-            gap: 8px;
-        }
-
-        .player-top-row {
-            display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 100%;
+            padding: 0 20px;
+            z-index: 100;
         }
 
         .now-playing-box {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             width: 30%;
+            cursor: pointer;
         }
 
         .now-playing-cover {
-            width: 48px;
-            height: 48px;
-            border-radius: 4px;
+            width: 54px;
+            height: 54px;
+            border-radius: 6px;
             object-fit: cover;
             background-color: #282828;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             color: var(--text-sub);
             overflow: hidden;
             flex-shrink: 0;
@@ -221,7 +317,7 @@
         .now-playing-meta {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
             overflow: hidden;
         }
 
@@ -246,15 +342,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             width: 40%;
-            max-width: 500px;
+            max-width: 600px;
         }
 
         .player-controls {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
         }
 
         .control-btn {
@@ -324,273 +420,419 @@
             width: 30%;
         }
 
-        /* Dokonalá optimalizace pro mobily */
+        /* Fullscreen Player pro Mobily */
+        .mobile-fullscreen-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, #333 0%, #121212 100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 25px;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .mobile-fullscreen-player.active {
+            transform: translateY(0);
+        }
+
+        .close-fs-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 24px;
+            align-self: flex-start;
+            cursor: pointer;
+        }
+
+        .fs-cover {
+            width: 280px;
+            height: 280px;
+            border-radius: 12px;
+            align-self: center;
+            object-fit: cover;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            background-color: #282828;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        .fs-meta {
+            margin-top: 20px;
+        }
+
+        .fs-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .fs-artist {
+            font-size: 16px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .fs-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .fs-play-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--text-main);
+            color: #000;
+            font-size: 24px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responzivita pro mobily */
         @media (max-width: 768px) {
             .app-container {
                 flex-direction: column;
-                height: calc(100vh - 125px);
+                height: calc(100vh - 80px);
             }
             .sidebar {
                 width: 100%;
                 height: auto;
-                flex-direction: row;
-                overflow-x: auto;
-                padding: 10px;
-                flex-shrink: 0;
+                padding: 10px 15px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+                gap: 10px;
             }
-            .sidebar h2 { display: none; }
-            .artist-btn { 
-                white-space: nowrap; 
-                padding: 6px 12px; 
-                background: #1e1e1e; 
-                border-radius: 20px; 
-                font-size: 14px;
-                width: auto;
-            }
+            .sidebar h2, .sidebar .artist-btn { display: none; }
             .main-content { padding: 15px; }
-            .header-section { gap: 15px; margin-bottom: 15px; }
-            .artist-avatar { width: 64px; height: 64px; font-size: 22px; }
-            .header-title { font-size: 22px; }
-            
+            .home-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .artist-card-img { width: 90px; height: 90px; }
             .player-bar {
-                height: 125px;
-                padding: 8px 12px;
-                gap: 6px;
+                height: 80px;
+                padding: 0 15px;
             }
-            .now-playing-box {
-                width: 100%;
-            }
-            .player-center {
-                width: 100%;
-            }
-            .player-right {
-                display: none;
-            }
+            .player-center, .player-right { display: none; }
+            .now-playing-box { width: 100%; }
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Boční menu / Mobilní lišta -->
+        <!-- Boční menu / Navigace -->
         <div class="sidebar">
+            <div class="brand-logo" onclick="showHome()">🎵 CloudPlayer</div>
+            
+            <button class="nav-item active" id="nav-home" onclick="showHome()">
+                🏠 Domů
+            </button>
+
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="search-input" placeholder="Hledat..." oninput="handleSearch()">
+            </div>
+
             <h2>Interpreti</h2>
             <div id="artist-list"></div>
         </div>
 
-        <!-- Hlavní obsah -->
-        <div class="main-content">
-            <div class="header-section">
-                <div id="artist-avatar-container" class="artist-avatar">🎵</div>
-                <h1 class="header-title" id="current-artist-title">Vyberte interpreta</h1>
-            </div>
-            <div class="song-list" id="song-list"></div>
+        <!-- Hlavní dynamický obsah -->
+        <div class="main-content" id="main-content">
+            <!-- Vygeneruje se dynamicky (Home / Interpret / Hledání) -->
         </div>
     </div>
 
-    <!-- Spodní přehrávač -->
+    <!-- Spodní lišta přehrávače -->
     <div class="player-bar">
-        <div class="player-top-row">
-            <div class="now-playing-box">
-                <div id="np-cover-container" class="now-playing-cover">🎵</div>
-                <div class="now-playing-meta">
-                    <div class="np-title" id="now-playing-title">Nic se nepřehrává</div>
-                    <div class="np-artist" id="now-playing-artist">-</div>
-                </div>
+        <div class="now-playing-box" onclick="openFullscreenPlayer()">
+            <div id="np-cover-container" class="now-playing-cover">🎵</div>
+            <div class="now-playing-meta">
+                <div class="np-title" id="now-playing-title">Nic se nepřehrává</div>
+                <div class="np-artist" id="now-playing-artist">Vyberte skladbu</div>
             </div>
+        </div>
 
-            <div class="player-center">
-                <div class="player-controls">
-                    <button class="control-btn" onclick="prevSong()" title="Předchozí">⏮</button>
-                    <button class="play-pause-btn" id="play-pause-icon" onclick="togglePlay()">▶</button>
-                    <button class="control-btn" onclick="nextSong()" title="Další">⏭</button>
-                </div>
-                <div class="progress-container">
-                    <span id="current-time">0:00</span>
-                    <div class="progress-bar-bg" id="progress-bar" onclick="seekSong(event)">
-                        <div class="progress-bar-fill" id="progress-fill"></div>
-                    </div>
-                    <span id="total-duration">0:00</span>
-                </div>
+        <div class="player-center">
+            <div class="player-controls">
+                <button class="control-btn" onclick="prevSong()" title="Předchozí">⏮</button>
+                <button class="play-pause-btn" id="play-pause-icon" onclick="togglePlay()">▶</button>
+                <button class="control-btn" onclick="nextSong()" title="Další">⏭</button>
             </div>
+            <div class="progress-container">
+                <span id="current-time">0:00</span>
+                <div class="progress-bar-bg" id="progress-bar" onclick="seekSong(event)">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
+                <span id="total-duration">0:00</span>
+            </div>
+        </div>
 
-            <div class="player-right"></div>
+        <div class="player-right"></div>
+    </div>
+
+    <!-- Fullscreen Player pro mobily -->
+    <div class="mobile-fullscreen-player" id="fs-player">
+        <button class="close-fs-btn" onclick="closeFullscreenPlayer()">✕</button>
+        <div class="fs-cover" id="fs-cover">🎵</div>
+        <div class="fs-meta">
+            <div class="fs-title" id="fs-title">Nic se nepřehrává</div>
+            <div class="fs-artist" id="fs-artist">-</div>
+        </div>
+        <div class="progress-container">
+            <span id="fs-current-time">0:00</span>
+            <div class="progress-bar-bg" id="fs-progress-bar" onclick="seekSong(event)">
+                <div class="progress-bar-fill" id="fs-progress-fill"></div>
+            </div>
+            <span id="fs-total-duration">0:00</span>
+        </div>
+        <div class="fs-controls">
+            <button class="control-btn" style="font-size: 30px;" onclick="prevSong()">⏮</button>
+            <button class="fs-play-btn" id="fs-play-btn" onclick="togglePlay()">▶</button>
+            <button class="control-btn" style="font-size: 30px;" onclick="nextSong()">⏭</button>
         </div>
     </div>
 
-    <!-- Skrytý audio element -->
     <audio id="audio-player"></audio>
 
     <script>
         let musicData = {};
         let currentArtist = "";
         let currentSongIndex = -1;
+        let activeQueue = [];
 
         const audioPlayer = document.getElementById('audio-player');
-        const nowPlayingTitle = document.getElementById('now-playing-title');
-        const nowPlayingArtist = document.getElementById('now-playing-artist');
+        const mainContent = document.getElementById('main-content');
         const artistListEl = document.getElementById('artist-list');
-        const songListEl = document.getElementById('song-list');
-        const currentArtistTitle = document.getElementById('current-artist-title');
         const playPauseBtn = document.getElementById('play-pause-icon');
+        const fsPlayBtn = document.getElementById('fs-play-btn');
         const progressFill = document.getElementById('progress-fill');
+        const fsProgressFill = document.getElementById('fs-progress-fill');
         const progressBar = document.getElementById('progress-bar');
         const currentTimeEl = document.getElementById('current-time');
         const totalDurationEl = document.getElementById('total-duration');
-        const artistAvatarContainer = document.getElementById('artist-avatar-container');
-        const npCoverContainer = document.getElementById('np-cover-container');
+        const fsCurrentTimeEl = document.getElementById('fs-current-time');
+        const fsTotalDurationEl = document.getElementById('fs-total-duration');
 
         fetch('songs.json')
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
                 musicData = data;
-                renderArtists();
+                renderSidebarArtists();
+                showHome();
             })
             .catch(err => console.error('Chyba načítání songs.json:', err));
 
-        function renderArtists() {
+        function renderSidebarArtists() {
             artistListEl.innerHTML = '';
-            const artists = Object.keys(musicData);
-            
-            artists.forEach((artist, index) => {
+            Object.keys(musicData).forEach(artist => {
                 const btn = document.createElement('button');
                 btn.className = 'artist-btn';
-                
                 const thumbPath = `songs/${artist}/cover.png`;
                 btn.innerHTML = `
-                    <img src="${thumbPath}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
-                    <span style="display:none;">🎵</span>
+                    <img src="${thumbPath}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';">
                     <span>${artist}</span>
                 `;
-
-                btn.onclick = () => selectArtist(artist, btn);
+                btn.onclick = () => selectArtist(artist);
                 artistListEl.appendChild(btn);
-
-                if (index === 0) selectArtist(artist, btn);
             });
         }
 
-        function selectArtist(artist, btnElement) {
-            currentArtist = artist;
-            currentArtistTitle.textContent = artist;
+        // Domovská obrazovka Spotify Grid
+        function showHome() {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-home').classList.add('active');
+
+            let gridHTML = '<h1 style="font-size:32px;font-weight:800;margin-bottom:20px;">Dobrý den</h1><div class="home-grid">';
             
-            const coverPath = `songs/${artist}/cover.png`;
-            artistAvatarContainer.innerHTML = `<img src="${coverPath}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.onerror=null;this.parentElement.innerHTML='🎵';">`;
-
-            document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
-
-            renderSongs();
-        }
-
-        function renderSongs() {
-            songListEl.innerHTML = '';
-            const songs = musicData[currentArtist] || [];
-
-            songs.forEach((song, index) => {
-                const item = document.createElement('div');
-                item.className = 'song-item';
-                const cleanName = song.replace(/\.[^/.]+$/, "");
-                
-                item.innerHTML = `
-                    <div class="song-info-left">
-                        <span class="song-index">${index + 1}</span>
-                        <div class="song-name">${cleanName}</div>
+            Object.keys(musicData).forEach(artist => {
+                const coverPath = `songs/${artist}/cover.png`;
+                gridHTML += `
+                    <div class="artist-card" onclick="selectArtist('${artist}')">
+                        <img src="${coverPath}" class="artist-card-img" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'artist-card-img\'>🎵</div>';">
+                        <div class="artist-card-name">${artist}</div>
                     </div>
                 `;
-
-                item.onclick = () => playSong(index);
-                songListEl.appendChild(item);
             });
+
+            gridHTML += '</div>';
+            mainContent.innerHTML = gridHTML;
         }
 
-        function playSong(index) {
-            const songs = musicData[currentArtist];
-            if (!songs || !songs[index]) return;
+        // Zobrazení jednoho interpreta
+        function selectArtist(artist) {
+            currentArtist = artist;
+            const songs = musicData[artist] || [];
 
+            let html = `
+                <div class="header-section">
+                    <div class="artist-avatar">
+                        <img src="songs/${artist}/cover.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🎵';">
+                    </div>
+                    <div>
+                        <span style="font-size:12px;font-weight:700;text-transform:uppercase;">Interpret</span>
+                        <h1 class="header-title">${artist}</h1>
+                    </div>
+                </div>
+                <div class="song-list">
+            `;
+
+            songs.forEach((song, index) => {
+                const cleanName = song.replace(/\.[^/.]+$/, "");
+                html += `
+                    <div class="song-item" onclick="playSongFromQueue('${artist}', ${index})">
+                        <div class="song-info-left">
+                            <span class="song-index">${index + 1}</span>
+                            <div class="song-name">${cleanName}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            mainContent.innerHTML = html;
+        }
+
+        // Vyhledávání v reálném čase
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            if (!query) { showHome(); return; }
+
+            let html = `<h2 style="margin-bottom:15px;">Výsledky pro: "${query}"</h2><div class="song-list">`;
+            let found = false;
+
+            Object.keys(musicData).forEach(artist => {
+                musicData[artist].forEach((song, index) => {
+                    const cleanName = song.replace(/\.[^/.]+$/, "");
+                    if (cleanName.toLowerCase().includes(query) || artist.toLowerCase().includes(query)) {
+                        found = true;
+                        html += `
+                            <div class="song-item" onclick="playSongFromQueue('${artist}', ${index})">
+                                <div class="song-info-left">
+                                    <span class="song-index">🎵</span>
+                                    <div>
+                                        <div class="song-name">${cleanName}</div>
+                                        <div style="font-size:12px;color:var(--text-sub);">${artist}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            });
+
+            if (!found) html += '<div style="color:var(--text-sub);">Nic nenalezeno</div>';
+            html += '</div>';
+            mainContent.innerHTML = html;
+        }
+
+        function playSongFromQueue(artist, index) {
+            currentArtist = artist;
             currentSongIndex = index;
-            const songFile = songs[index];
+            activeQueue = musicData[artist];
+            playSong();
+        }
+
+        function playSong() {
+            if (!activeQueue || !activeQueue[currentSongIndex]) return;
+
+            const songFile = activeQueue[currentSongIndex];
             const songPath = `songs/${currentArtist}/${songFile}`;
+            const cleanName = songFile.replace(/\.[^/.]+$/, "");
+            const coverPath = `songs/${currentArtist}/cover.png`;
 
             audioPlayer.src = songPath;
-            audioPlayer.play().catch(e => console.log("Přehrávání zablokováno:", e));
+            audioPlayer.play().catch(e => console.log("Autoplay blocked:", e));
+
             playPauseBtn.textContent = "⏸";
+            fsPlayBtn.textContent = "⏸";
 
-            const cleanName = songFile.replace(/\.[^/.]+$/, "");
-            nowPlayingTitle.textContent = cleanName;
-            nowPlayingArtist.textContent = currentArtist;
+            document.getElementById('now-playing-title').textContent = cleanName;
+            document.getElementById('now-playing-artist').textContent = currentArtist;
+            document.getElementById('fs-title').textContent = cleanName;
+            document.getElementById('fs-artist').textContent = currentArtist;
 
-            const coverPath = `songs/${currentArtist}/cover.png`;
-            npCoverContainer.innerHTML = `<img src="${coverPath}" style="width:100%;height:100%;border-radius:4px;object-fit:cover;" onerror="this.onerror=null;this.parentElement.innerHTML='🎵';">`;
-
-            const items = songListEl.querySelectorAll('.song-item');
-            items.forEach((it, i) => {
-                if (i === index) {
-                    it.classList.add('playing');
-                } else {
-                    it.classList.remove('playing');
-                }
-            });
+            const imgHTML = `<img src="${coverPath}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🎵';">`;
+            document.getElementById('np-cover-container').innerHTML = imgHTML;
+            document.getElementById('fs-cover').innerHTML = imgHTML;
         }
 
         function togglePlay() {
-            if (currentSongIndex === -1 && musicData[currentArtist]?.length > 0) {
-                playSong(0);
-                return;
-            }
             if (audioPlayer.paused) {
                 audioPlayer.play();
-            playPauseBtn.textContent = "⏸";
+                playPauseBtn.textContent = "⏸";
+                fsPlayBtn.textContent = "⏸";
             } else {
                 audioPlayer.pause();
                 playPauseBtn.textContent = "▶";
+                fsPlayBtn.textContent = "▶";
             }
         }
 
         function nextSong() {
-            const songs = musicData[currentArtist];
-            if (!songs) return;
-            let nextIndex = currentSongIndex + 1;
-            if (nextIndex >= songs.length) nextIndex = 0;
-            playSong(nextIndex);
+            if (!activeQueue.length) return;
+            currentSongIndex = (currentSongIndex + 1) % activeQueue.length;
+            playSong();
         }
 
         function prevSong() {
-            const songs = musicData[currentArtist];
-            if (!songs) return;
-            let prevIndex = currentSongIndex - 1;
-            if (prevIndex < 0) prevIndex = songs.length - 1;
-            playSong(prevIndex);
+            if (!activeQueue.length) return;
+            currentSongIndex = (currentSongIndex - 1 + activeQueue.length) % activeQueue.length;
+            playSong();
         }
 
         audioPlayer.ontimeupdate = () => {
             if (audioPlayer.duration) {
-                const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                progressFill.style.width = `${progressPercent}%`;
+                const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progressFill.style.width = `${percent}%`;
+                fsProgressFill.style.width = `${percent}%`;
                 
-                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
-                totalDurationEl.textContent = formatTime(audioPlayer.duration);
+                const timeStr = formatTime(audioPlayer.currentTime);
+                const durStr = formatTime(audioPlayer.duration);
+
+                currentTimeEl.textContent = timeStr;
+                totalDurationEl.textContent = durStr;
+                fsCurrentTimeEl.textContent = timeStr;
+                fsTotalDurationEl.textContent = durStr;
             }
         };
 
         function seekSong(event) {
-            const rect = progressBar.getBoundingClientRect();
+            const rect = event.currentTarget.getBoundingClientRect();
             const clickX = event.clientX - rect.left;
-            const width = rect.width;
             if (audioPlayer.duration) {
-                audioPlayer.currentTime = (clickX / width) * audioPlayer.duration;
+                audioPlayer.currentTime = (clickX / rect.width) * audioPlayer.duration;
             }
         }
 
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
-        audioPlayer.onended = () => {
-            nextSong();
-        };
+        function openFullscreenPlayer() {
+            if (window.innerWidth <= 768) {
+                document.getElementById('fs-player').classList.add('active');
+            }
+        }
+
+        function closeFullscreenPlayer() {
+            document.getElementById('fs-player').classList.remove('active');
+        }
+
+        audioPlayer.onended = nextSong;
     </script>
 </body>
 </html>
