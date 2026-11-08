@@ -72,7 +72,7 @@
             font-weight: 600;
             text-align: left;
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 15px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -117,6 +117,7 @@
             justify-content: center;
             font-size: 40px;
             color: var(--text-sub);
+            overflow: hidden;
         }
 
         .header-title {
@@ -204,6 +205,7 @@
             justify-content: center;
             font-size: 20px;
             color: var(--text-sub);
+            overflow: hidden;
         }
 
         .now-playing-meta {
@@ -422,7 +424,15 @@
             artists.forEach((artist, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'artist-btn';
-                btn.innerHTML = `🎵 ${artist}`;
+                
+                // Načtení .png fotky vedle jména v menu (při chybě se skryje a ukáže notu)
+                const thumbPath = `songs/${artist}/cover.png`;
+                btn.innerHTML = `
+                    <img src="${thumbPath}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+                    <span style="display:none;">🎵</span>
+                    <span>${artist}</span>
+                `;
+
                 btn.onclick = () => selectArtist(artist, btn);
                 artistListEl.appendChild(btn);
 
@@ -434,7 +444,8 @@
             currentArtist = artist;
             currentArtistTitle.textContent = artist;
             
-            const coverPath = `songs/${artist}/cover.jpg`;
+            // Velká .png fotka v hlavičce interpreta
+            const coverPath = `songs/${artist}/cover.png`;
             artistAvatarContainer.innerHTML = `<img src="${coverPath}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.onerror=null;this.parentElement.innerHTML='🎵';">`;
 
             document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
@@ -480,7 +491,8 @@
             nowPlayingTitle.textContent = cleanName;
             nowPlayingArtist.textContent = currentArtist;
 
-            const coverPath = `songs/${currentArtist}/cover.jpg`;
+            // Miniatura .png obrázku v dolním přehrávači
+            const coverPath = `songs/${currentArtist}/cover.png`;
             npCoverContainer.innerHTML = `<img src="${coverPath}" style="width:100%;height:100%;border-radius:4px;object-fit:cover;" onerror="this.onerror=null;this.parentElement.innerHTML='🎵';">`;
 
             const items = songListEl.querySelectorAll('.song-item');
