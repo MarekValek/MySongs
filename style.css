@@ -531,7 +531,6 @@ body {
     margin-top: 4px;
 }
 
-/* Upravené ovládací prvky ve fullscreenu (zarovnané do linie) */
 .fs-controls {
     display: flex;
     align-items: center;
@@ -580,10 +579,11 @@ body {
     transform: scale(1.06);
 }
 
+/* Opravená responzivita pro mobily */
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column;
-        height: calc(100vh - 80px);
+        height: calc(100vh - 70px);
     }
     .sidebar {
         width: 100%;
@@ -591,17 +591,35 @@ body {
         padding: 10px 15px;
         border-right: none;
         border-bottom: 1px solid #1a1a1a;
-        gap: 10px;
+        gap: 8px;
     }
-    .sidebar h2, .sidebar .artist-btn { display: none; }
-    .main-content { padding: 15px; }
-    .home-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-    .artist-card-img { width: 100px; height: 100px; }
+    /* Schováme nadpis a seznam interpretů z bočního menu v mobilu, zůstane jen logo, domů, oblíbené a vyhledávání */
+    .sidebar h2, .sidebar .artist-btn { 
+        display: none; 
+    }
+    .main-content { 
+        padding: 15px; 
+    }
+    .home-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 14px; 
+    }
+    .artist-card-img { 
+        width: 100px; 
+        height: 100px; 
+    }
     .player-bar {
-        height: 80px;
+        height: 70px;
         padding: 0 15px;
     }
-    .player-center { display: none; }
-    .player-right { width: auto; }
-    .now-playing-box { width: calc(100% - 40px); }
+    /* Úplně skryjeme desktopové ovládání ve spodní liště, aby se nerozbíjelo */
+    .player-center { 
+        display: none; 
+    }
+    .player-right { 
+        width: auto; 
+    }
+    .now-playing-box { 
+        width: 100%; 
+    }
 }
