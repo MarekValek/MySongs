@@ -38,7 +38,7 @@ body {
     padding: 20px 15px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
     border-right: 1px solid #1a1a1a;
 }
 
@@ -141,6 +141,7 @@ body {
     background-color: var(--card-hover);
 }
 
+/* Hlavní obsah s plynulým fade-in efektem */
 .main-content {
     flex: 1;
     padding: 30px;
@@ -273,25 +274,7 @@ body {
     font-weight: 700;
 }
 
-.song-actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.fav-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: var(--text-sub);
-    transition: transform 0.1s;
-}
-
-.fav-btn:hover {
-    transform: scale(1.2);
-}
-
+/* Animovaný ekvalizér (skákající čárky) */
 .equalizer {
     display: flex;
     align-items: flex-end;
@@ -316,6 +299,7 @@ body {
     100% { transform: scaleY(1); }
 }
 
+/* Spodní lišta přehrávače */
 .player-bar {
     height: 90px;
     background-color: var(--sidebar-bg);
@@ -404,6 +388,7 @@ body {
     transform: scale(1.1);
 }
 
+/* Aktivní stav tlačítek shuffle / repeat */
 .control-btn.active {
     color: var(--accent-color);
 }
@@ -465,10 +450,9 @@ body {
 
 .player-right {
     width: 30%;
-    display: flex;
-    justify-content: flex-end;
 }
 
+/* Fullscreen Player pro mobily */
 .mobile-fullscreen-player {
     position: fixed;
     top: 0;
@@ -512,10 +496,7 @@ body {
     font-size: 60px;
 }
 
-.fs-meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.fs-meta {
     margin-top: 15px;
 }
 
@@ -534,56 +515,30 @@ body {
 .fs-controls {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 340px;
-    margin: 20px auto;
-    padding: 0 10px;
-}
-
-.fs-controls .control-btn {
-    font-size: 24px;
-    color: var(--text-sub);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s, transform 0.1s;
-}
-
-.fs-controls .control-btn:hover {
-    color: var(--text-main);
-    transform: scale(1.1);
-}
-
-.fs-controls .control-btn.active {
-    color: var(--accent-color);
+    justify-content: center;
+    gap: 40px;
+    gap: 30px;
+    margin: 20px 0;
 }
 
 .fs-play-btn {
-    width: 64px;
-    height: 64px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
     background-color: var(--text-main);
     color: #000;
-    font-size: 22px;
+    font-size: 24px;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-    cursor: pointer;
-    transition: transform 0.15s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
-.fs-play-btn:hover {
-    transform: scale(1.06);
-}
-
-/* Opravená responzivita pro mobily */
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column;
-        height: calc(100vh - 70px);
+        height: calc(100vh - 80px);
     }
     .sidebar {
         width: 100%;
@@ -591,35 +546,16 @@ body {
         padding: 10px 15px;
         border-right: none;
         border-bottom: 1px solid #1a1a1a;
-        gap: 8px;
+        gap: 10px;
     }
-    /* Schováme nadpis a seznam interpretů z bočního menu v mobilu, zůstane jen logo, domů, oblíbené a vyhledávání */
-    .sidebar h2, .sidebar .artist-btn { 
-        display: none; 
-    }
-    .main-content { 
-        padding: 15px; 
-    }
-    .home-grid { 
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 14px; 
-    }
-    .artist-card-img { 
-        width: 100px; 
-        height: 100px; 
-    }
+    .sidebar h2, .sidebar .artist-btn { display: none; }
+    .main-content { padding: 15px; }
+    .home-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .artist-card-img { width: 100px; height: 100px; }
     .player-bar {
-        height: 70px;
+        height: 80px;
         padding: 0 15px;
     }
-    /* Úplně skryjeme desktopové ovládání ve spodní liště, aby se nerozbíjelo */
-    .player-center { 
-        display: none; 
-    }
-    .player-right { 
-        width: auto; 
-    }
-    .now-playing-box { 
-        width: 100%; 
-    }
+    .player-center, .player-right { display: none; }
+    .now-playing-box { width: 100%; }
 }
