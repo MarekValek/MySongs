@@ -2,6 +2,8 @@ let musicData = {};
 let currentArtist = "";
 let currentSongIndex = -1;
 let activeQueue = [];
+let isShuffle = false;
+let isRepeat = false;
 
 const audioPlayer = document.getElementById('audio-player');
 const mainContent = document.getElementById('main-content');
@@ -21,6 +23,33 @@ fetch('songs.json')
     .then(data => {
         musicData = data;
         renderSidebarArtists();
+        
+        // Obnovení poslední skladby z paměti (pokud existuje)
+        const savedArtist = localStorage.getItem('last_artist');
+        const savedSongIndex = localStorage.getItem('last_song_index');
+        
+        if (savedArtist && musicData[savedArtist] && savedSongIndex !== null) {
+            currentArtist = savedArtist;
+            activeQueue = musicData[savedArtist];
+            currentSongIndex = parseInt(savedSongIndex);
+            
+            const songFile = activeQueue[currentSongIndex];
+            if (songFile) {
+                audioPlayer.src = `songs/${currentArtist}/${songFile}`;
+                const cleanName = songFile.replace(/\.[^/.]+$/, "");
+                const coverPath = `songs/${currentArtist}/cover.png`;
+
+                document.getElementById('now-playing-title').textContent = cleanName;
+                document.getElementById('now-playing-artist').textContent = currentArtist;
+                document.getElementById('fs-title').textContent = cleanName;
+                document.getElementById('fs-artist').textContent = currentArtist;
+
+                const imgHTML = `<img src="${coverPath}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🎵';">`;
+                document.getElementById('np-cover-container').innerHTML = imgHTML;
+                document.getElementById('fs-cover').innerHTML = imgHTML;
+            }
+        }
+        
         showHome();
     })
     .catch(err => console.error('Chyba načítání songs.json:', err));
@@ -82,7 +111,7 @@ function selectArtist(artist) {
         const isPlaying = (currentArtist === artist && currentSongIndex === index && !audioPlayer.paused);
         
         html += `
-            <div class="song-item ${isPlaying ? 'playing' : ''}" id="song-row-${index}" onclick="playSongFromQueue('${artist}', ${index})">
+            <div class="song-item ${isPlaying ? 'playing' : ''}" onclick="playSongFromQueue('${artist}', ${index})">
                 <div class="song-info-left">
                     <span class="song-index">${isPlaying ? '<div class="equalizer"><span></span><span></span><span></span></div>' : (index + 1)}</span>
                     <div class="song-name">${cleanName}</div>
@@ -157,7 +186,10 @@ function playSong() {
     document.getElementById('np-cover-container').innerHTML = imgHTML;
     document.getElementById('fs-cover').innerHTML = imgHTML;
 
-    // Aktualizace seznamu skladeb (ekvalizér)
+    // Uložení do paměti prohlížeče
+    localStorage.setItem('last_artist', currentArtist);
+    localStorage.setItem('last_song_index', currentSongIndex);
+
     if (mainContent.innerHTML.includes('header-title') && mainContent.innerHTML.includes(currentArtist)) {
         selectArtist(currentArtist);
     }
@@ -181,7 +213,12 @@ function togglePlay() {
 
 function nextSong() {
     if (!activeQueue.length) return;
-    currentSongIndex = (currentSongIndex + 1) % activeQueue.length;
+    
+    if (isShuffle) {
+        currentSongIndex = Math.floor(Math.random() * activeQueue.length);
+    } else {
+        currentSongIndex = (currentSongIndex + 1) % activeQueue.length;
+    }
     playSong();
 }
 
@@ -189,6 +226,32 @@ function prevSong() {
     if (!activeQueue.length) return;
     currentSongIndex = (currentSongIndex - 1 + activeQueue.length) % activeQueue.length;
     playSong();
+}
+
+function toggleShuffle() {
+    isShuffle = !isShuffle;
+    const btn1 = document.getElementById('shuffle-btn');
+    const btn2 = document.getElementById('fs-shuffle-btn');
+    if (isShuffle) {
+        btn1.classList.add('active');
+        btn2.classList.add('active');
+    } else {
+        btn1.classList.remove('active');
+        btn2.classList.remove('active');
+    }
+}
+
+function toggleRepeat() {
+    isRepeat = !isRepeat;
+    const btn1 = document.getElementById('repeat-btn');
+    const btn2 = document.getElementById('fs-repeat-btn');
+    if (isRepeat) {
+        btn1.classList.add('active');
+        btn2.classList.add('active');
+    } else {
+        btn1.classList.remove('active');
+        btn2.classList.remove('active');
+    }
 }
 
 audioPlayer.ontimeupdate = () => {
@@ -206,6 +269,27 @@ audioPlayer.ontimeupdate = () => {
         fsTotalDurationEl.textContent = durStr;
     }
 };
+
+audioPlayer.onended = () => {
+    if (isRepeat) {
+        audioPlayer.play();
+    } else {
+        nextSong();
+    }
+};
+
+// Klávesové zkratky pro PC (Mezerník = play/pause, Šipky = další/předchozí)
+document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return; // Ignorovat, když píšeš do vyhledávání
+    if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+    } else if (e.code === 'ArrowRight') {
+        nextSong();
+    } else if (e.code === 'ArrowLeft') {
+        prevSong();
+    }
+});
 
 function seekSong(event) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -230,5 +314,3 @@ function openFullscreenPlayer() {
 function closeFullscreenPlayer() {
     document.getElementById('fs-player').classList.remove('active');
 }
-
-audioPlayer.onended = nextSong;
