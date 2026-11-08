@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Cloud Player</title>
+    <title>My Cloud Player Masterpiece</title>
     <link rel="icon" type="image/png" href="images/mysongs.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212">
@@ -14,7 +14,7 @@
 <body>
 
     <div class="app-container">
-        <!-- Boční menu / Navigace -->
+        <!-- Boční menu -->
         <div class="sidebar">
             <div class="brand-logo" onclick="showHome()">🎵 CloudPlayer</div>
             
@@ -31,7 +31,7 @@
             <div id="artist-list"></div>
         </div>
 
-        <!-- Hlavní dynamický obsah -->
+        <!-- Hlavní obsah -->
         <div class="main-content" id="main-content"></div>
     </div>
 
@@ -47,9 +47,11 @@
 
         <div class="player-center">
             <div class="player-controls">
+                <button class="control-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Náhodně">🔀</button>
                 <button class="control-btn" onclick="prevSong()" title="Předchozí">⏮</button>
                 <button class="play-pause-btn" id="play-pause-icon" onclick="togglePlay()">▶</button>
                 <button class="control-btn" onclick="nextSong()" title="Další">⏭</button>
+                <button class="control-btn" id="repeat-btn" onclick="toggleRepeat()" title="Opakovat">🔁</button>
             </div>
             <div class="progress-container">
                 <span id="current-time">0:00</span>
@@ -79,9 +81,11 @@
             <span id="fs-total-duration">0:00</span>
         </div>
         <div class="fs-controls">
-            <button class="control-btn" style="font-size: 30px;" onclick="prevSong()">⏮</button>
+            <button class="control-btn" id="fs-shuffle-btn" onclick="toggleShuffle()" style="font-size: 22px;">🔀</button>
+            <button class="control-btn" style="font-size: 28px;" onclick="prevSong()">⏮</button>
             <button class="fs-play-btn" id="fs-play-btn" onclick="togglePlay()">▶</button>
-            <button class="control-btn" style="font-size: 30px;" onclick="nextSong()">⏭</button>
+            <button class="control-btn" style="font-size: 28px;" onclick="nextSong()">⏭</button>
+            <button class="control-btn" id="fs-repeat-btn" onclick="toggleRepeat()" style="font-size: 22px;">🔁</button>
         </div>
     </div>
 
